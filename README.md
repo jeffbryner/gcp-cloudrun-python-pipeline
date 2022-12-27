@@ -1,13 +1,13 @@
 
-# GCP-CloudRun-Pipeline
+# GCP-CloudRun-Python-Pipeline
 
-A goldilocks effort for bootstraping a GCP CloudRun project with it's own ci/cd pipeline focused on the quickest way to hoist a cloudrun container into GCP via terraform.
+A goldilocks effort (now with python) for bootstraping a GCP CloudRun project with it's own ci/cd pipeline focused on the quickest way to hoist a cloudrun container into GCP via terraform.
 
-Based project : https://github.com/jeffbryner/gcp-project-pipeline
+Based on this starter kickstarter project : https://github.com/jeffbryner/gcp-project-pipeline
 
 ## Why?
 
-This is meant to simply satisfy the urge to dream up a CloudRun project, give it a name and location in the org tree, terraform apply and then immediately begin using the ci/cd pipeline to build the remaining infrastructure.
+This is meant to simply satisfy the urge to dream up a *python* CloudRun project, give it a name and location in the org tree, terraform apply and then immediately begin using the ci/cd pipeline to build the remaining infrastructure.
 
 ## Setup
 You will need to be able to create a project with billing in the appropriate place in your particular org structure. First you'll run terraform locallly to initialize the project and the pipeline. After the project is created, we will transfer terraform state to the cloud bucket and from then on you can use git commits to trigger terraform changes without any local resources or permissions.
@@ -122,29 +122,3 @@ The `build_viewers` members can view detailed log output.
 The triggers all use a [helper runner script](./cicd/configs/run.sh) to perform
 actions. The `DIRS` var within the script lists the directories that are managed by the triggers and the order they are
 run.
-
-### Deletion check allowlist
-
-The deletion check run as part of the `tf-plan` trigger optionally accepts an
-allowlist of resources to ignore, using
-[grep extended regex patterns](https://en.wikipedia.org/wiki/Regular_expression#POSIX_extended)
-matched against the Terraform resource **address** from the plan.
-
-To configure an allowlist:
-
-1. Create a file `tf-deletion-allowlist.txt` in the `cicd/configs/` directory.
-2. Add patterns to it, one per line.
-
-Example:
-
-```text
-network
-^module.cloudsql.module.safer_mysql.google_sql_database.default$
-google_sql_user.db_users\["user-creds"\]
-```
-
-Each line allows, respectively:
-
-1. Any resource whose address contains the string "network".
-2. A specific resource within a module.
-3. A specific resource with a generated name, i.e. from `for_each` or `count`.
