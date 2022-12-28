@@ -26,17 +26,18 @@ resource "random_id" "suffix" {
 
 
 data "google_project" "cloudrun" {
-  project_id = "prj-cloudrun-sample-6271"
+  project_id = "prj-cloudrun-python-f58d"
 }
 
 locals {
 
   project_name      = data.google_project.cloudrun.name
   project_id        = data.google_project.cloudrun.project_id
+  service_name      = "cloudrun-srv"
+  location          = "us-central1"
   state_bucket_name = format("bkt-%s-%s", "tfstate", local.project_id)
   art_bucket_name   = format("bkt-%s-%s", "artifacts", local.project_id)
-  repo_name         = format("cicd-%s", local.project_name)
-  gar_repo_name     = format("%s-%s", "prj", "containers")
+  gar_repo_name     = format("%s-%s", "prj", "containers") #container artifact registry repository
 }
 
 /**
@@ -69,14 +70,14 @@ resource "google_project_organization_policy" "services_policy" {
 }
 
 resource "google_cloud_run_service" "default" {
-  name     = "cloudrun-srv"
-  location = "us-central1"
+  name     = local.service_name
+  location = local.location
   project  = local.project_id
 
   template {
     spec {
       containers {
-        image = "us-central1-docker.pkg.dev/prj-cloudrun-sample-6271/prj-containers/cloudrun"
+        image = "${local.location}-docker.pkg.dev/${local.project_id}/${local.gar_repo_name}/${local.service_name}"
         env {
           name  = "TARGET"
           value = "Worldly"
