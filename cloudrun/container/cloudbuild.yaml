@@ -1,26 +1,27 @@
- steps:
- # Build the container image
- - name: 'gcr.io/cloud-builders/docker'
-   args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE-NAME}:$COMMIT_SHA', '.']
- # Push the container image to Container Registry
- - name: 'gcr.io/cloud-builders/docker'
-   args: ['push', 'gcr.io/${PROJECT_ID}/${_SERVICE-NAME}:$COMMIT_SHA']
- # Deploy container image to Cloud Run
- - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-   entrypoint: gcloud
-   args:
-   - 'run'
-   - 'deploy'
-   - '${_SERVICE-NAME}'
-   - '--image'
-   - 'gcr.io/${PROJECT_ID}/${_SERVICE-NAME}:$COMMIT_SHA'
-   - '--region'
-   - '${_REGION}'
- images:
- - 'gcr.io/${PROJECT_ID}/${_SERVICE-NAME}:$COMMIT_SHA'
- substitutions:
-  _PORT: '8080'
-  _REGION: us-central1
-  _IMAGE: cloudrun
-  _${_SERVICE-NAME}: cloudrun
-  _REPOSITORY: prj-containers
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${_IMAGE}', '.']
+# Push the container image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${_IMAGE}']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - '${_SERVICE-NAME}'
+  - '--image'
+  - '${_IMAGE}'
+  - '--region'
+  - '${_REGION}'
+images:
+- '${_IMAGE}'
+substitutions:
+ _REGION: us-central1
+ _IMAGE: ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_SERVICE-NAME}
+ _SERVICE-NAME: cloudrun-srv
+ _REPOSITORY: prj-containers
+options:
+ dynamic_substitutions: true
