@@ -58,12 +58,6 @@ variable "project_prefix" {
   default     = "prj"
 }
 
-variable "auto_create_network" {
-  description = "Create the default network"
-  type        = bool
-  default     = false
-}
-
 variable "cloudbuild_viewers" {
   description = "groups to add as a viewer/reader in group:groupname@domain.com format"
   type        = list(any)
