@@ -11,7 +11,7 @@ steps:
   args:
   - 'run'
   - 'deploy'
-  - '${_SERVICE-NAME}'
+  - '${_SERVICE_NAME}'
   - '--image'
   - '${_IMAGE}'
   - '--region'
@@ -19,9 +19,11 @@ steps:
 images:
 - '${_IMAGE}'
 substitutions:
+# specify region to avoid 'global'
  _REGION: us-central1
- _IMAGE: ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_SERVICE-NAME}
- _SERVICE-NAME: cloudrun-srv
+# specify artifact repository (not source repository)
  _REPOSITORY: prj-containers
+ _IMAGE: ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}
+ _SERVICE_NAME: cloudrun-srv
 options:
  dynamic_substitutions: true
