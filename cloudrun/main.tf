@@ -46,8 +46,9 @@ cloud build container
 
 resource "null_resource" "cloudbuild_cloudrun_container" {
   triggers = {
-    always_run = "${timestamp()}"
+    dir_sha1 = sha1(join("", [for f in fileset(path.root, "container/**") : filesha1(f)]))
   }
+
 
   provisioner "local-exec" {
     command = <<EOT
@@ -70,16 +71,18 @@ resource "google_project_organization_policy" "services_policy" {
 }
 
 resource "google_cloud_run_service" "default" {
-  name     = local.service_name
-  location = local.location
-  project  = local.project_id
+  name                       = local.service_name
+  location                   = local.location
+  project                    = local.project_id
+  autogenerate_revision_name = true
 
   template {
     spec {
+      service_account_name = "${data.google_project.cloudrun.number}-compute@developer.gserviceaccount.com"
       containers {
         image = "${local.location}-docker.pkg.dev/${local.project_id}/${local.gar_repo_name}/${local.service_name}"
         env {
-          name  = "TARGET"
+          name  = "NAME"
           value = "Worldly"
         }
       }
