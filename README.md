@@ -67,6 +67,8 @@ The /cloudrun directory is where you will work with terraform to publish the con
 
 tl;dr is the main.tf is the terraform to tweak, and /cloudrun/container is the Dockerfile, cloudbuild.yaml and place to put your container source.
 
+Be sure to set terraform.tvfars to reference your target project ID.
+
 See /cloudrun/README.md for details.
 
 

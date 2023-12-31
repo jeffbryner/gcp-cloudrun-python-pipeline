@@ -3,6 +3,7 @@ Directory of cloudrun resources built by our /cicd pipeline
 This directory is a standalone terraform concern, separate from the /cicd directory.
 
 Be sure to rename backend.tf.example to backend.tf including the name of the state bucket created from your work in the /cicd directory.
+Also be sure to reference your target project in the terraform.tfvars file (example included).
 
 It is called from the same triggers, so change source and push to trigger a build.
 
