@@ -26,7 +26,7 @@ resource "random_id" "suffix" {
 
 
 data "google_project" "cloudrun" {
-  project_id = "prj-cloudrun-python-f58d"
+  project_id = var.project_id
 }
 
 locals {
@@ -70,6 +70,13 @@ resource "google_project_organization_policy" "services_policy" {
   }
 }
 
+# dedicated service account for our cloudrun service
+# so we don't use the default compute engine service account
+resource "google_service_account" "cloudrun_service_identity" {
+  project    = local.project_id
+  account_id = "${local.service_name}-service-account"
+}
+
 resource "google_cloud_run_service" "default" {
   name                       = local.service_name
   location                   = local.location
@@ -78,7 +85,7 @@ resource "google_cloud_run_service" "default" {
 
   template {
     spec {
-      service_account_name = "${data.google_project.cloudrun.number}-compute@developer.gserviceaccount.com"
+      service_account_name = google_service_account.cloudrun_service_identity.email
       containers {
         image = "${local.location}-docker.pkg.dev/${local.project_id}/${local.gar_repo_name}/${local.service_name}"
         env {
