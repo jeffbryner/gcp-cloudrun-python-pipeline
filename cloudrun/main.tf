@@ -33,7 +33,7 @@ locals {
 
   project_name      = data.google_project.cloudrun.name
   project_id        = data.google_project.cloudrun.project_id
-  service_name      = "cloudrun-srv"
+  service_name      = var.service_name
   location          = "us-central1"
   state_bucket_name = format("bkt-%s-%s", "tfstate", local.project_id)
   art_bucket_name   = format("bkt-%s-%s", "artifacts", local.project_id)
@@ -52,7 +52,7 @@ resource "null_resource" "cloudbuild_cloudrun_container" {
 
   provisioner "local-exec" {
     command = <<EOT
-      gcloud builds submit ./container/ --project ${local.project_id} --config=./container/cloudbuild.yaml
+      gcloud builds submit ./container/ --project ${local.project_id}  --substitutions=_SERVICE_NAME=${local.service_name} --config=./container/cloudbuild.yaml
   EOT
   }
 }
