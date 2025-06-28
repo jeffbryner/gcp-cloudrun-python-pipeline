@@ -49,7 +49,6 @@ locals {
   cloudbuild_sa_email = "${google_project.cicd.number}-compute@developer.gserviceaccount.com"
   services = [
     "admin.googleapis.com",
-    "bigquery.googleapis.com",
     "cloudbilling.googleapis.com",
     "cloudbuild.googleapis.com",
     "cloudresourcemanager.googleapis.com",
@@ -57,33 +56,17 @@ locals {
     "iam.googleapis.com",
     "servicenetworking.googleapis.com",
     "serviceusage.googleapis.com",
-    "sqladmin.googleapis.com",
     "sourcerepo.googleapis.com",
-    "appengine.googleapis.com",
-    "cloudscheduler.googleapis.com",
     "run.googleapis.com",
     "containerregistry.googleapis.com",
     "artifactregistry.googleapis.com",
     "orgpolicy.googleapis.com"
   ]
-  cloudbuild_sa_viewer_roles = [
-    "roles/browser",
-    "roles/iam.securityReviewer",
-    "roles/secretmanager.secretViewer",
-    "roles/secretmanager.secretAccessor",
-  ]
-  cloudbuild_sa_editor_roles = [
-    "roles/compute.xpnAdmin",
-    "roles/logging.configWriter",
-    "roles/resourcemanager.projectCreator",
-    "roles/resourcemanager.organizationAdmin",
-    "roles/orgpolicy.policyAdmin",
-    "roles/resourcemanager.folderCreator",
-  ]
+
   cloudbuild_roles = [
     # Allow CICD to view all resources within the project so it can run terraform plans against them.
     # It won't be able to actually apply any changes unless granted the permission in this list.
-    "roles/editor",
+    "roles/owner",
 
     # Enable Cloud Build SA to list and enable APIs in the project.
     # and set cloud run IAM policy
