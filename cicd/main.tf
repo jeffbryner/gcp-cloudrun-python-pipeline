@@ -43,7 +43,10 @@ locals {
   parent_id         = var.parent_folder == "" ? var.org_id : split("/", var.parent_folder)[1]
   project_org_id    = var.folder_id != "" ? null : var.org_id
   project_folder_id = var.folder_id != "" ? var.folder_id : null
-  cloudbuild_sa     = "serviceAccount:${google_project.cicd.number}@cloudbuild.gserviceaccount.com"
+  // google no longer uses the default cloud build service account, so we need to use the compute service account instead.
+  // cloudbuild_sa_email = "${google_project.cicd.number}@cloudbuild.gserviceaccount.com"
+  cloudbuild_sa       = "serviceAccount:${google_project.cicd.number}-compute@developer.gserviceaccount.com"
+  cloudbuild_sa_email = "${google_project.cicd.number}-compute@developer.gserviceaccount.com"
   services = [
     "admin.googleapis.com",
     "bigquery.googleapis.com",
